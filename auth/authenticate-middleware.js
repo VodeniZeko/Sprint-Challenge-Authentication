@@ -1,8 +1,11 @@
-/* 
-  complete the middleware code to check if the user is logged in
-  before granting access to the next middleware/route handler
-*/
+const Users = require("./auth-model.js");
 
-module.exports = (req, res, next) => {
-  res.status(401).json({ you: 'shall not pass!' });
+module.exports = async (req, res, next) => {
+  const user = await User.findById(req.decodedToken.sub);
+  if (user) {
+    req.user = user;
+    next();
+  } else {
+    res.status(400).json({ error: "Unrecognized user." });
+  }
 };
